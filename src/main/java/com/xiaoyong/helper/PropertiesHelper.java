@@ -12,7 +12,7 @@ import java.util.Properties;
 public class PropertiesHelper {
     private static Properties properties = PropertiesUtil.getProperties("config.properties");
 
-    public static String getBasePackage(String key) {
-        return PropertiesUtil.getString(properties, key);
+    public static String getBasePackage() {
+        return PropertiesUtil.getString(properties, "basePackage");
     }
 }
