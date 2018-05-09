@@ -1,5 +1,6 @@
 package com.xiaoyong.helper;
 
+import com.xiaoyong.common.ConfigConstant;
 import com.xiaoyong.utils.PropertiesUtil;
 
 import java.util.Properties;
@@ -13,6 +14,6 @@ public class PropertiesHelper {
     private static Properties properties = PropertiesUtil.getProperties("config.properties");
 
     public static String getBasePackage() {
-        return PropertiesUtil.getString(properties, "basePackage");
+        return PropertiesUtil.getString(properties, ConfigConstant.BASE_PACKAGE_KEY);
     }
 }
