@@ -5,6 +5,7 @@ import com.xiaoyong.annotation.Repository;
 import com.xiaoyong.annotation.Service;
 import com.xiaoyong.utils.ClassUtil;
 import com.xiaoyong.utils.PropertiesUtil;
+import com.xiaoyong.utils.ReflectionUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.Set;
  */
 public class BeanHelper {
 
-    public static Map<Class<?>, Object> BEAN_CONTAINER = new HashMap<>();
+    private static Map<Class<?>, Object> BEAN_CONTAINER = new HashMap<>();
 
     static {
 //        获取classSet
@@ -28,13 +29,7 @@ public class BeanHelper {
             if (clazz.isAnnotationPresent(Controller.class)
                     || clazz.isAnnotationPresent(Service.class)
                     || clazz.isAnnotationPresent(Repository.class)) {
-                Object bean = null;
-                try {
-//                    实例化clazz
-                    bean = clazz.newInstance();
-                } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+                Object bean = ReflectionUtil.newInstance(clazz);
 //                向BEAN_CONTAINER中添加映射
                 BEAN_CONTAINER.put(clazz, bean);
             }

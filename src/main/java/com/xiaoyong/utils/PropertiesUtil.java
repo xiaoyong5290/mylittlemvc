@@ -13,7 +13,7 @@ import java.util.Properties;
 public class PropertiesUtil {
     public static Properties getProperties(String propertiesFileName) {
         Properties properties = new Properties();
-        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(propertiesFileName);
+        InputStream in = ClassUtil.getClassLoader().getResourceAsStream(propertiesFileName);
         try {
             properties.load(new InputStreamReader(in, "utf-8"));
         } catch (IOException e) {

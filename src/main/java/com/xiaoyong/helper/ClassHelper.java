@@ -5,6 +5,7 @@ import com.xiaoyong.annotation.Service;
 import com.xiaoyong.common.ConfigConstant;
 import com.xiaoyong.utils.ClassUtil;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,15 +15,15 @@ import java.util.Set;
  * Description    :
  */
 public class ClassHelper {
-    private static Set<Class<?>> CLASS_SET;
-    private static Set<Class<?>> SERVICE_CLASS_SET;
-    private static Set<Class<?>> CONTROLLER_CLASS_SET;
-    private static Set<Class<?>> BEAN_CLASS_SET;
+    private static final Set<Class<?>> CLASS_SET;
+    private static Set<Class<?>> serviceClassSet;
+    private static Set<Class<?>> controllerClassSet;
+    private static Set<Class<?>> beanClassSet;
 
     static {
-//        从ConfigConstant获取BASE_PACKAGE_KEY
+//        从ConfigConstant获取要扫描的包名
         String basePackage = ConfigConstant.BASE_PACKAGE_KEY;
-//        使用ClassUtil的getClassSet(String packageName)方法得到CLASS_SET
+//        使用ClassUtil的getClassSet方法得到CLASS_SET
         CLASS_SET = ClassUtil.getClassSet(basePackage);
     }
 
@@ -31,41 +32,39 @@ public class ClassHelper {
     }
 
     public static Set<Class<?>> getServiceClassSet() {
-//        如果SERVICE_CLASS_SET等于null，表示没有获取过，在if块中获取
-        if (SERVICE_CLASS_SET == null) {
-            SERVICE_CLASS_SET = new HashSet<>();
-//            遍历CLASS_SET中被Service注解修饰的类
-            for (Class<?> clazz : CLASS_SET) {
-                if (clazz.isAnnotationPresent(Service.class)) {
-                    SERVICE_CLASS_SET.add(clazz);
-                }
-            }
+//        如果serviceClassSet等于null，表示没有获取过，在if块中获取
+        if (serviceClassSet == null) {
+            serviceClassSet = new HashSet<>();
         }
-        return SERVICE_CLASS_SET;
+        return getSpecifiedClassSet(serviceClassSet, Service.class);
     }
 
     public static Set<Class<?>> getControllerClassSet() {
-//        如果CONTROLLER_CLASS_SET等于null，表示没有获取过，在if块中获取
-        if (CONTROLLER_CLASS_SET == null) {
-            CONTROLLER_CLASS_SET = new HashSet<>();
-//            遍历CLASS_SET中被Controller注解修饰的类
-            for (Class<?> clazz : CLASS_SET) {
-                if (clazz.isAnnotationPresent(Controller.class)) {
-                    CONTROLLER_CLASS_SET.add(clazz);
-                }
-            }
+//        如果controllerClassSet等于null，表示没有获取过，在if块中获取
+        if (controllerClassSet == null) {
+            controllerClassSet = new HashSet<>();
         }
-        return CONTROLLER_CLASS_SET;
+        return getSpecifiedClassSet(controllerClassSet, Controller.class);
     }
 
     public static Set<Class<?>> getBeanClassSet() {
-//        如果BEAN_CLASS_SET等于null，表示没有获取过，在if块中获取
-        if (BEAN_CLASS_SET == null) {
-            BEAN_CLASS_SET = new HashSet<>();
+//        如果beanClassSet等于null，表示没有获取过，在if块中获取
+        if (beanClassSet == null) {
+            beanClassSet = new HashSet<>();
 //            将被Controller和Service修饰的类都加入BEAN_CLASS_SET
-            BEAN_CLASS_SET.addAll(getControllerClassSet());
-            BEAN_CLASS_SET.addAll(getServiceClassSet());
+            beanClassSet.addAll(getControllerClassSet());
+            beanClassSet.addAll(getServiceClassSet());
         }
-        return BEAN_CLASS_SET;
+        return beanClassSet;
+    }
+
+    public static Set<Class<?>> getSpecifiedClassSet(Set<Class<?>> classSet, Class<? extends Annotation> annotationClass) {
+//            遍历CLASS_SET中被注解修饰的类
+        for (Class<?> clazz : CLASS_SET) {
+            if (clazz.isAnnotationPresent(annotationClass)) {
+                classSet.add(clazz);
+            }
+        }
+        return classSet;
     }
 }
